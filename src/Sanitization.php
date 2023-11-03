@@ -80,8 +80,20 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitization' ) ) :
 		 * @return string The sanitized endpoint.
 		 */
 		public static function endpoint( string $endpoint ): string {
-			$sanitized = preg_replace( '#^https?://#', '', $endpoint );
+			// Remove any protocol prefixes
+			$sanitized = preg_replace( '#^https?://#', '', rtrim( $endpoint, '/' ) );
 
+			// Validate URL format
+			if ( filter_var( 'https://' . $sanitized, FILTER_VALIDATE_URL ) === false ) {
+				return ''; // Return empty string or handle accordingly
+			}
+
+			// Ensure that the endpoint has a valid TLD
+			if ( ! preg_match( '/\.[a-z]{2,}(?:\.[a-z]{2,})?$/', $sanitized ) ) {
+				return ''; // Return empty string or handle accordingly
+			}
+
+			// Finally, strip any invalid characters
 			return preg_replace( '/[^a-zA-Z0-9\-\.]/', '', $sanitized );
 		}
 
