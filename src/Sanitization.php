@@ -16,7 +16,7 @@
  * that the data exchanged with S3 is consistent and secure, thus minimizing potential
  * errors and vulnerabilities.
  *
- * @package     arraypress/s3-sanitization
+ * @package     ArrayPress/Utils/S3/Sanitization
  * @copyright   Copyright (c) 2023, ArrayPress Limited
  * @license     GPL2+
  * @since       1.0.0
@@ -37,6 +37,21 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitization' ) ) :
 	 * Offers utility methods for cleansing and validating input parameters associated with S3 operations.
 	 */
 	class Sanitization {
+
+		/**
+		 * Sanitize the S3 object key.
+		 *
+		 * Example:
+		 * Input: "my_folder/my_file.txt*"
+		 * Output: "my_folder/my_file.txt"
+		 *
+		 * @param string $key The S3 object key to sanitize.
+		 *
+		 * @return string The sanitized S3 object key.
+		 */
+		public static function object_key( string $key ): string {
+			return preg_replace( '/[^a-zA-Z0-9\-_\.\/]/', '', $key );
+		}
 
 		/**
 		 * Sanitize the provided bucket name based on S3's naming conventions.
@@ -69,6 +84,17 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitization' ) ) :
 		}
 
 		/**
+		 * Sanitize the extra query string by removing any unsafe characters.
+		 *
+		 * @param string $extra_query_string The extra query string to sanitize.
+		 *
+		 * @return string The sanitized extra query string.
+		 */
+		public static function extra_query_string( string $extra_query_string ): string {
+			return preg_replace( '/[^a-zA-Z0-9\-_=&]/', '', $extra_query_string );
+		}
+
+		/**
 		 * Sanitize the endpoint to ensure only valid domain names without any protocol.
 		 *
 		 * Example:
@@ -97,67 +123,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitization' ) ) :
 			return preg_replace( '/[^a-zA-Z0-9\-\.]/', '', $sanitized );
 		}
 
-		/**
-		 * Sanitize the S3 object key.
-		 *
-		 * Example:
-		 * Input: "my_folder/my_file.txt*"
-		 * Output: "my_folder/my_file.txt"
-		 *
-		 * @param string $key The S3 object key to sanitize.
-		 *
-		 * @return string The sanitized S3 object key.
-		 */
-		public static function object_key( string $key ): string {
-			return preg_replace( '/[^a-zA-Z0-9\-_\.\/]/', '', $key );
-		}
-
-		/**
-		 * Raw URL encode a key and allow for '/' characters.
-		 *
-		 * Example:
-		 * Input: "my folder/my file.txt"
-		 * Output: "my%20folder/my%20file.txt"
-		 *
-		 * @param string $key Key to encode
-		 *
-		 * @return string Returns the encoded key
-		 */
-		private function encode_object_name( string $key ): string {
-			$key = str_replace( '+', ' ', $key );
-
-			return str_replace( '%2F', '/', rawurlencode( $key ) );
-		}
-
-		/**
-		 * Decode a URL encoded object key.
-		 *
-		 * Example:
-		 * Input: "my%20folder/my%20file.txt"
-		 * Output: "my folder/my file.txt"
-		 *
-		 * @param string $key Encoded object key.
-		 *
-		 * @return string Returns the decoded key.
-		 */
-		public static function decode_object_name( string $key ): string {
-			return rawurldecode( str_replace( ' ', '+', $key ) );
-		}
-
-		/**
-		 * Validate if the provided bucket name conforms to S3's naming conventions.
-		 *
-		 * Example:
-		 * Input: "my.bucket-123"
-		 * Output: true
-		 *
-		 * @param string $bucket The bucket name to validate.
-		 *
-		 * @return bool True if valid, false otherwise.
-		 */
-		public static function is_valid_bucket( string $bucket ): bool {
-			return preg_match( '/^[a-z0-9\-\.]{3,63}$/', $bucket ) === 1;
-		}
 	}
 
 endif;
