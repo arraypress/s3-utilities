@@ -39,6 +39,32 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitization' ) ) :
 	class Sanitization {
 
 		/**
+		 * Sanitize AWS access key ID.
+		 *
+		 * Removes any non-alphanumeric characters from the access key ID.
+		 *
+		 * @param string $access_key_id The AWS access key ID to sanitize.
+		 *
+		 * @return string The sanitized access key ID.
+		 */
+		public static function access_key_id( string $access_key_id ): string {
+			return preg_replace( '/[^A-Za-z0-9]/', '', $access_key_id );
+		}
+
+		/**
+		 * Sanitize AWS secret access key.
+		 *
+		 * Removes any non-alphanumeric characters from the secret access key.
+		 *
+		 * @param string $secret_access_key The AWS secret access key to sanitize.
+		 *
+		 * @return string The sanitized secret access key.
+		 */
+		public static function secret_access_key( string $secret_access_key ): string {
+			return preg_replace( '/[^A-Za-z0-9]/', '', $secret_access_key );
+		}
+
+		/**
 		 * Sanitize the S3 object key.
 		 *
 		 * Example:
@@ -84,17 +110,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitization' ) ) :
 		}
 
 		/**
-		 * Sanitize the extra query string by removing any unsafe characters.
-		 *
-		 * @param string $extra_query_string The extra query string to sanitize.
-		 *
-		 * @return string The sanitized extra query string.
-		 */
-		public static function extra_query_string( string $extra_query_string ): string {
-			return preg_replace( '/[^a-zA-Z0-9\-_=&]/', '', $extra_query_string );
-		}
-
-		/**
 		 * Sanitize the endpoint to ensure only valid domain names without any protocol.
 		 *
 		 * Example:
@@ -121,6 +136,28 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitization' ) ) :
 
 			// Finally, strip any invalid characters
 			return preg_replace( '/[^a-zA-Z0-9\-\.]/', '', $sanitized );
+		}
+
+		/**
+		 * Sanitize a value as a positive integer representing a duration.
+		 *
+		 * @param mixed $duration The value to sanitize.
+		 *
+		 * @return int The sanitized duration as a positive integer.
+		 */
+		public static function duration( $duration ): int {
+			return abs( (int) $duration );
+		}
+
+		/**
+		 * Sanitize the extra query string by removing any unsafe characters.
+		 *
+		 * @param string $extra_query_string The extra query string to sanitize.
+		 *
+		 * @return string The sanitized extra query string.
+		 */
+		public static function extra_query_string( string $extra_query_string ): string {
+			return preg_replace( '/[^a-zA-Z0-9\-_=&]/', '', $extra_query_string );
 		}
 
 	}
