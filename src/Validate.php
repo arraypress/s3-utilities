@@ -74,7 +74,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * @return bool True if valid, false otherwise.
 		 * @throws Exception If the access key ID is invalid.
 		 */
-		public static function access_key_id( string $key ): bool {
+		public static function access_key( string $key ): bool {
 			if ( ! preg_match( '/^[A-Za-z0-9]+$/', $key ) ) {
 				throw new Exception( "Invalid AWS access key ID characters. It should be alphanumeric." );
 			}
@@ -90,7 +90,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * @return bool True if valid, false otherwise.
 		 * @throws Exception If the secret access key is invalid.
 		 */
-		public static function secret_access_key( string $key ): bool {
+		public static function secret_key( string $key ): bool {
 			if ( ! preg_match( '/^[A-Za-z0-9]+$/', $key ) ) {
 				throw new Exception( "Invalid AWS secret access key characters. It should be alphanumeric." );
 			}

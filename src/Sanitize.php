@@ -43,12 +43,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 *
 		 * Removes any non-alphanumeric characters from the access key ID.
 		 *
-		 * @param string $access_key_id The AWS access key ID to sanitize.
+		 * @param string $key The AWS access key ID to sanitize.
 		 *
 		 * @return string The sanitized access key ID.
 		 */
-		public static function access_key_id( string $access_key_id ): string {
-			return preg_replace( '/[^A-Za-z0-9]/', '', $access_key_id );
+		public static function access_key( string $key ): string {
+			return preg_replace( '/[^A-Za-z0-9]/', '', $key );
 		}
 
 		/**
@@ -56,12 +56,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 *
 		 * Removes any non-alphanumeric characters from the secret access key.
 		 *
-		 * @param string $secret_access_key The AWS secret access key to sanitize.
+		 * @param string $key The AWS secret access key to sanitize.
 		 *
 		 * @return string The sanitized secret access key.
 		 */
-		public static function secret_access_key( string $secret_access_key ): string {
-			return preg_replace( '/[^A-Za-z0-9]/', '', $secret_access_key );
+		public static function secret_key( string $key ): string {
+			return preg_replace( '/[^A-Za-z0-9]/', '', $key );
 		}
 
 		/**
