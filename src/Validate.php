@@ -30,16 +30,16 @@ namespace ArrayPress\Utils\S3;
 use Exception;
 
 /**
- * Check if the class `Validation` is defined, and if not, define it.
+ * Check if the class `Validate` is defined, and if not, define it.
  */
-if ( ! class_exists( __NAMESPACE__ . '\\Validation' ) ) :
+if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 
 	/**
 	 * Validation
 	 *
 	 * Offers utility methods for validating and ensuring the integrity of input parameters associated with S3 operations.
 	 */
-	class Validation {
+	class Validate {
 
 		/**
 		 * Check if a value is valid using a specified validation method.

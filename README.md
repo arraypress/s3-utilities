@@ -1,6 +1,6 @@
 # S3 Sanitization Library
 
-The `Sanitization` class has been meticulously crafted to ensure the correctness and compliance of S3 bucket names, endpoints, regions, and object keys. Its objective is to sanitize and validate names and strings according to the S3 naming conventions, ensuring seamless integration with S3-compatible storage systems and safeguarding against potential naming conflicts or violations.
+The `Sanitize` class has been meticulously crafted to ensure the correctness and compliance of S3 bucket names, endpoints, regions, and object keys. Its objective is to sanitize and validate names and strings according to the S3 naming conventions, ensuring seamless integration with S3-compatible storage systems and safeguarding against potential naming conflicts or violations.
 
 **Key Features:**
 
@@ -11,7 +11,7 @@ The `Sanitization` class has been meticulously crafted to ensure the correctness
 * **Validation:** Besides sanitization, the library also validates bucket names to make sure they conform to S3's stringent naming conventions.
 * **Broad S3 Compatibility:** While the class aids in sanitization, its design ensures compatibility with numerous S3-Compatible storage solutions, including Linode, DigitalOcean Spaces, Cloudflare R2, BackBlaze, and more.
 
-Ensure your S3 operations are error-free and compliant by integrating the `Sanitization` class into your application. Whether you're building a new application, migrating data, or just managing your S3 storage, proper naming and validation are crucial for smooth operations.
+Ensure your S3 operations are error-free and compliant by integrating the `Sanitize` class into your application. Whether you're building a new application, migrating data, or just managing your S3 storage, proper naming and validation are crucial for smooth operations.
 
 ## Installation and set up
 
@@ -43,55 +43,62 @@ Before using the `Sanitization` class, you need to include the Composer-generate
 require_once dirname(__FILE__) . '/vendor/autoload.php';
 ```
 
-**Usage Examples for the `Sanitization` Class**
+**Usage Examples for the `Sanitize` Class**
 
 **1. Sanitizing Bucket Names:**
+
 ```php
 $input = "My_Bucket-Name.123";
-$sanitized = ArrayPress\Utils\S3\Sanitization::bucket( $input );
+$sanitized = ArrayPress\Utils\S3\Sanitize::bucket( $input );
 echo $sanitized;  // Outputs: "my-bucket-name.123"
 ```
 
 **2. Sanitizing S3 Region Strings:**
+
 ```php
 $input = "us-west-1_extra";
-$sanitized = ArrayPress\Utils\S3\Sanitization::region( $input );
+$sanitized = ArrayPress\Utils\S3\Sanitize::region( $input );
 echo $sanitized;  // Outputs: "us-west-1"
 ```
 
 **3. Sanitizing Endpoints:**
+
 ```php
 $input = "https://my.endpoint.com/";
-$sanitized = ArrayPress\Utils\S3\Sanitization::endpoint( $input );
+$sanitized = ArrayPress\Utils\S3\Sanitize::endpoint( $input );
 echo $sanitized;  // Outputs: "my.endpoint.com"
 ```
 
 **4. Sanitizing Object Keys:**
+
 ```php
 $input = "my_folder/my_file.txt*";
-$sanitized = ArrayPress\Utils\S3\Sanitization::object_key( $input );
+$sanitized = ArrayPress\Utils\S3\Sanitize::object_key( $input );
 echo $sanitized;  // Outputs: "my_folder/my_file.txt"
 ```
 
 **5. Encoding Object Names:**
+
 ```php
 $input = "my folder/my file.txt";
-$encoded = ArrayPress\Utils\S3\Sanitization::encode_object_name( $input );
+$encoded = ArrayPress\Utils\S3\Serialization::encode_object_name( $input );
 echo $encoded;  // Outputs: "my%20folder/my%20file.txt"
 ```
 
 **6. Decoding Object Names:**
+
 ```php
 $input = "my%20folder/my%20file.txt";
-$decoded = ArrayPress\Utils\S3\Sanitization::decode_object_name( $input );
+$decoded = ArrayPress\Utils\S3\Serialization::decode_object_name( $input );
 echo $decoded;  // Outputs: "my folder/my file.txt"
 ```
 
 **7. Validating Bucket Names:**
+
 ```php
 $input = "my.bucket-123";
-$isValid = ArrayPress\Utils\S3\Sanitization::is_valid_bucket( $input );
-echo $isValid ? 'Valid' : 'Invalid';  // Outputs: "Valid"
+$is_valid = ArrayPress\Utils\S3\Validate::is_valid( $input, 'bucket' );
+echo $is_valid ? 'Valid' : 'Invalid';  // Outputs: "Valid"
 ```
 
 ## Contributions

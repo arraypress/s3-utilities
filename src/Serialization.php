@@ -22,7 +22,7 @@
 namespace ArrayPress\Utils\S3;
 
 /**
- * Check if the class `Sanitization` is defined, and if not, define it.
+ * Check if the class `Serialization` is defined, and if not, define it.
  */
 if ( ! class_exists( __NAMESPACE__ . '\\Serialization' ) ) :
 
