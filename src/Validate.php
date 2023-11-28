@@ -27,7 +27,7 @@
 
 namespace ArrayPress\Utils\S3;
 
-use Exception;
+use InvalidArgumentException;
 
 /**
  * Check if the class `Validate` is defined, and if not, define it.
@@ -56,7 +56,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 					self::$method_name( $value );
 
 					return true; // Return true if validation passes
-				} catch ( Exception $e ) {
+				} catch ( InvalidArgumentException $e ) {
 					// Catch any exceptions and return false
 					return false;
 				}
@@ -72,11 +72,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * @param string $key The AWS access key ID to validate.
 		 *
 		 * @return bool True if valid, false otherwise.
-		 * @throws Exception If the access key ID is invalid.
+		 * @throws InvalidArgumentException If the access key ID is invalid.
 		 */
 		public static function access_key( string $key ): bool {
 			if ( ! preg_match( '/^[A-Za-z0-9]+$/', $key ) ) {
-				throw new Exception( "Invalid AWS access key ID characters. It should be alphanumeric." );
+				throw new InvalidArgumentException( "Invalid AWS access key ID characters. It should be alphanumeric." );
 			}
 
 			return true;
@@ -88,11 +88,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * @param string $key The AWS secret access key to validate.
 		 *
 		 * @return bool True if valid, false otherwise.
-		 * @throws Exception If the secret access key is invalid.
+		 * @throws InvalidArgumentException If the secret access key is invalid.
 		 */
 		public static function secret_key( string $key ): bool {
 			if ( ! preg_match( '/^[A-Za-z0-9]+$/', $key ) ) {
-				throw new Exception( "Invalid AWS secret access key characters. It should be alphanumeric." );
+				throw new InvalidArgumentException( "Invalid AWS secret access key characters. It should be alphanumeric." );
 			}
 
 			return true;
@@ -107,11 +107,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 *
 		 * @param string $key The S3 object key to validate.
 		 *
-		 * @throws Exception If the key is invalid.
+		 * @throws InvalidArgumentException If the key is invalid.
 		 */
 		public static function object_key( string $key ): bool {
 			if ( ! preg_match( '/^[a-zA-Z0-9\-_\.\/]*$/', $key ) ) {
-				throw new Exception( "Invalid S3 object key. Only alphanumeric characters, hyphens, underscores, dots, and slashes are allowed." );
+				throw new InvalidArgumentException( "Invalid S3 object key. Only alphanumeric characters, hyphens, underscores, dots, and slashes are allowed." );
 			}
 
 			return true;
@@ -127,19 +127,19 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * @param string $bucket The bucket name to validate.
 		 *
 		 * @return bool True if the bucket name is valid.
-		 * @throws Exception If the bucket name is invalid.
+		 * @throws InvalidArgumentException If the bucket name is invalid.
 		 *
 		 */
 		public static function bucket( string $bucket ): bool {
 			// Check length
 			$length = strlen( $bucket );
 			if ( $length < 3 || $length > 63 ) {
-				throw new Exception( "Invalid bucket name length. It should be between 3 and 63 characters." );
+				throw new InvalidArgumentException( "Invalid bucket name length. It should be between 3 and 63 characters." );
 			}
 
 			// Check characters
 			if ( ! preg_match( '/^[a-z0-9\-\.]+$/', $bucket ) ) {
-				throw new Exception( "Invalid bucket name characters. Only lowercase letters, numbers, hyphens, and dots are allowed." );
+				throw new InvalidArgumentException( "Invalid bucket name characters. Only lowercase letters, numbers, hyphens, and dots are allowed." );
 			}
 
 			return true;
@@ -155,11 +155,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * @param string $region The S3 region string to check.
 		 *
 		 * @return bool True if the region is valid.
-		 * @throws Exception If the region is invalid.
+		 * @throws InvalidArgumentException If the region is invalid.
 		 */
 		public static function region( string $region ): bool {
 			if ( ! preg_match( '/^[a-z0-9\-]+$/', $region ) ) {
-				throw new Exception( "Invalid S3 region. It should contain only lowercase letters, numbers, and hyphens." );
+				throw new InvalidArgumentException( "Invalid S3 region. It should contain only lowercase letters, numbers, and hyphens." );
 			}
 
 			return true;
@@ -174,7 +174,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 *
 		 * @param string $endpoint The endpoint to check.
 		 *
-		 * @throws Exception If the endpoint is invalid.
+		 * @throws InvalidArgumentException If the endpoint is invalid.
 		 */
 		public static function endpoint( string $endpoint ): bool {
 			// Remove any protocol prefixes
@@ -182,12 +182,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 
 			// Validate URL format
 			if ( filter_var( 'https://' . $sanitized, FILTER_VALIDATE_URL ) === false ) {
-				throw new Exception( "Invalid endpoint format. It should be a valid URL." );
+				throw new InvalidArgumentException( "Invalid endpoint format. It should be a valid URL." );
 			}
 
 			// Ensure that the endpoint has a valid TLD
 			if ( ! preg_match( '/\.[a-z]{2,}(?:\.[a-z]{2,})?$/', $sanitized ) ) {
-				throw new Exception( "Invalid top-level domain in the endpoint." );
+				throw new InvalidArgumentException( "Invalid top-level domain in the endpoint." );
 			}
 
 			// Finally, strip any invalid characters
@@ -195,7 +195,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 
 			// Check if the sanitized endpoint is empty
 			if ( empty( $sanitized ) ) {
-				throw new Exception( "Invalid endpoint. It should not be empty." );
+				throw new InvalidArgumentException( "Invalid endpoint. It should not be empty." );
 			}
 
 			return true;
@@ -207,12 +207,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * @param mixed $duration The value to check.
 		 *
 		 * @return bool True if the duration is valid.
-		 * @throws Exception If the duration is invalid.
+		 * @throws InvalidArgumentException If the duration is invalid.
 		 *
 		 */
 		public static function duration( $duration ): bool {
 			if ( ! is_int( $duration ) || $duration <= 0 ) {
-				throw new Exception( "Invalid duration value. It should be a positive integer representing a duration." );
+				throw new InvalidArgumentException( "Invalid duration value. It should be a positive integer representing a duration." );
 			}
 
 			return true;
@@ -224,12 +224,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * @param string $query_string The query string to check.
 		 *
 		 * @return bool True if the query string is valid.
-		 * @throws Exception If the query string is invalid.
+		 * @throws InvalidArgumentException If the query string is invalid.
 		 *
 		 */
 		public static function extra_query_string( string $query_string ): bool {
 			if ( ! preg_match( '/^[a-zA-Z0-9\-_=&]*$/', $query_string ) ) {
-				throw new Exception( "Invalid query string characters." );
+				throw new InvalidArgumentException( "Invalid query string characters." );
 			}
 
 			return true;
