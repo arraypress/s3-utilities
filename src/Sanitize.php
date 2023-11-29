@@ -43,12 +43,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 *
 		 * Removes any non-alphanumeric characters from the access key ID.
 		 *
-		 * @param string $key The AWS access key ID to sanitize.
+		 * @param mixed $key The AWS access key ID to sanitize.
 		 *
 		 * @return string The sanitized access key ID.
 		 */
-		public static function access_key( string $key ): string {
-			return preg_replace( '/[^A-Za-z0-9]/', '', $key );
+		public static function access_key( $key ): string {
+			return is_string( $key )
+				? preg_replace( '/[^A-Za-z0-9]/', '', $key )
+				: '';
 		}
 
 		/**
@@ -56,12 +58,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 *
 		 * Removes any non-alphanumeric characters from the secret access key.
 		 *
-		 * @param string $key The AWS secret access key to sanitize.
+		 * @param mixed $key The AWS secret access key to sanitize.
 		 *
 		 * @return string The sanitized secret access key.
 		 */
-		public static function secret_key( string $key ): string {
-			return preg_replace( '/[^A-Za-z0-9]/', '', $key );
+		public static function secret_key( $key ): string {
+			return is_string( $key )
+				? preg_replace( '/[^A-Za-z0-9]/', '', $key )
+				: '';
 		}
 
 		/**
@@ -71,12 +75,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 * Input: "my_folder/my_file.txt*"
 		 * Output: "my_folder/my_file.txt"
 		 *
-		 * @param string $key The S3 object key to sanitize.
+		 * @param mixed $key The S3 object key to sanitize.
 		 *
 		 * @return string The sanitized S3 object key.
 		 */
-		public static function object_key( string $key ): string {
-			return preg_replace( '/[^a-zA-Z0-9\-_\.\/]/', '', $key );
+		public static function object_key( $key ): string {
+			return is_string( $key )
+				? preg_replace( '/[^a-zA-Z0-9\-_\.\/]/', '', $key )
+				: '';
 		}
 
 		/**
@@ -86,12 +92,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 * Input: "My_Bucket-Name.123"
 		 * Output: "my-bucket-name.123"
 		 *
-		 * @param string $bucket The bucket name to sanitize.
+		 * @param mixed $bucket The bucket name to sanitize.
 		 *
 		 * @return string The sanitized bucket name.
 		 */
-		public static function bucket( string $bucket ): string {
-			return preg_replace( '/[^a-z0-9\-\.]/', '', $bucket );
+		public static function bucket( $bucket ): string {
+			return is_string( $bucket )
+				? preg_replace( '/[^a-z0-9\-\.]/', '', $bucket )
+				: '';
 		}
 
 		/**
@@ -101,12 +109,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 * Input: "us-west-1_extra"
 		 * Output: "us-west-1"
 		 *
-		 * @param string $region The S3 region string to sanitize.
+		 * @param mixed $region The S3 region string to sanitize.
 		 *
 		 * @return string The sanitized S3 region string.
 		 */
-		public static function region( string $region ): string {
-			return preg_replace( '/[^a-z0-9\-]/', '', $region );
+		public static function region( $region ): string {
+			return is_string( $region )
+				? preg_replace( '/[^a-z0-9\-]/', '', $region )
+				: '';
 		}
 
 		/**
@@ -116,11 +126,15 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 * Input: "https://my.endpoint.com/"
 		 * Output: "my.endpoint.com"
 		 *
-		 * @param string $endpoint The endpoint to sanitize.
+		 * @param mixed $endpoint The endpoint to sanitize.
 		 *
 		 * @return string The sanitized endpoint.
 		 */
-		public static function endpoint( string $endpoint ): string {
+		public static function endpoint( $endpoint ): string {
+			if ( ! is_string( $endpoint ) ) {
+				return ''; // Return empty string or handle accordingly
+			}
+
 			// Remove any protocol prefixes
 			$sanitized = preg_replace( '#^https?://#', '', rtrim( $endpoint, '/' ) );
 
@@ -152,12 +166,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		/**
 		 * Sanitize the extra query string by removing any unsafe characters.
 		 *
-		 * @param string $extra_query_string The extra query string to sanitize.
+		 * @param mixed $extra_query_string The extra query string to sanitize.
 		 *
 		 * @return string The sanitized extra query string.
 		 */
-		public static function extra_query_string( string $extra_query_string ): string {
-			return preg_replace( '/[^a-zA-Z0-9\-_=&]/', '', $extra_query_string );
+		public static function extra_query_string( $extra_query_string ): string {
+			return is_string( $extra_query_string )
+				? preg_replace( '/[^a-zA-Z0-9\-_=&]/', '', $extra_query_string )
+				: '';
 		}
 
 		/**
@@ -193,22 +209,28 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		/**
 		 * Sanitizes a string by converting special characters to their respective HTML entities.
 		 *
-		 * @param string $data The input string to be sanitized.
+		 * @param mixed $data The input string to be sanitized.
 		 *
 		 * @return string The sanitized string with special characters converted to HTML entities.
 		 */
-		public static function html( string $data ): string {
-			return htmlspecialchars( $data, ENT_QUOTES, 'UTF-8' );
+		public static function html( $data ): string {
+			return is_string( $data )
+				? htmlspecialchars( $data, ENT_QUOTES, 'UTF-8' )
+				: '';
 		}
 
 		/**
 		 * Sanitize a given URL.
 		 *
-		 * @param string $url The raw URL to sanitize.
+		 * @param mixed $url The raw URL to sanitize.
 		 *
 		 * @return string The sanitized URL or an empty string if invalid.
 		 */
-		public static function url( string $url ): string {
+		public static function url( $url ): string {
+			if ( ! is_string( $url ) ) {
+				return ''; // Return empty string or handle accordingly
+			}
+
 			$clean_url = filter_var( $url, FILTER_SANITIZE_URL );
 			if ( filter_var( $clean_url, FILTER_VALIDATE_URL ) ) {
 				return $clean_url;
