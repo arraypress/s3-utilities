@@ -270,14 +270,13 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * @throws InvalidArgumentException If the query string is invalid.
 		 */
 		public static function extra_query_string( $query_string ): bool {
-			if ( empty( $query_string ) ) {
-				throw new InvalidArgumentException( "Query string cannot be empty." );
-			}
-			if ( ! is_string( $query_string ) ) {
-				throw new InvalidArgumentException( "Query string must be a string." );
-			}
-			if ( ! preg_match( '/^[a-zA-Z0-9\-_=&]*$/', $query_string ) ) {
-				throw new InvalidArgumentException( "Invalid query string characters." );
+			if ( ! empty( $query_string ) ) {
+				if ( ! is_string( $query_string ) ) {
+					throw new InvalidArgumentException( "Query string must be a string." );
+				}
+				if ( ! preg_match( '/^[a-zA-Z0-9\-_=&]*$/', $query_string ) ) {
+					throw new InvalidArgumentException( "Invalid query string characters." );
+				}
 			}
 
 			return true;
