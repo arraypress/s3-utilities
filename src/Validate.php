@@ -282,6 +282,22 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 			return true;
 		}
 
+		/**
+		 * Validate if a value is a valid boolean.
+		 *
+		 * @param mixed $value The value to check.
+		 *
+		 * @return bool True if the value is a valid boolean.
+		 * @throws InvalidArgumentException If the value is not a valid boolean.
+		 */
+		public static function path_style( $value ): bool {
+			if ( ! is_bool( $value ) ) {
+				throw new InvalidArgumentException( "Path style must be a boolean." );
+			}
+
+			return true;
+		}
+
 	}
 
 endif;
