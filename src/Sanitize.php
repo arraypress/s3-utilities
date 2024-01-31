@@ -1,33 +1,36 @@
 <?php
 /**
- * The Sanitization class offers utility methods to cleanse and validate input parameters
- * related to Amazon's Simple Storage Service (S3) operations.
+ * The `Sanitize` class within the ArrayPress\S3 namespace serves as a dedicated utility for sanitizing various
+ * input parameters specifically for Amazon S3 operations. Part of the arraypress/s3-utilities package, this class
+ * offers a comprehensive suite of methods aimed at cleaning and standardizing data inputs to conform to AWS S3
+ * standards and requirements.
  *
- * This class contains methods to:
+ * Key features of the `Sanitize` class include:
+ * - Sanitization of AWS access key IDs and secret access keys by removing non-alphanumeric characters.
+ * - Ensuring S3 object keys are free of unsafe characters, allowing only specific, permissible characters.
+ * - Standardizing S3 bucket names to comply with Amazon S3 naming conventions by removing disallowed characters.
+ * - Processing S3 region strings to remove any characters not part of the standard region format.
+ * - Sanitizing S3 endpoint URLs to ensure they are valid domain names without protocol specifications.
+ * - Converting any non-positive duration values into positive integers.
+ * - Cleaning up query strings to include only characters that are deemed safe and valid.
+ * - General sanitization functions for boolean values, URLs, and strings to ensure data cleanliness and safety.
  *
- * - Sanitize bucket names to ensure conformity with S3's naming conventions.
- * - Sanitize S3 region strings by removing any disallowed characters.
- * - Sanitize S3 endpoints by removing protocols and invalid domain characters.
- * - Sanitize S3 object keys by permitting only valid characters.
- * - Encode and decode S3 object names to ensure valid URL representation.
- * - Validate the provided bucket name to ensure it adheres to S3's naming guidelines.
+ * This class plays a crucial role in enhancing the security and stability of interactions with AWS S3 by providing
+ * reliable methods to preprocess and sanitize data inputs, thus reducing the risk of errors and security
+ * vulnerabilities associated with improper or malicious input.
  *
- * By providing a dedicated sanitization process for S3 operations, this class ensures
- * that the data exchanged with S3 is consistent and secure, thus minimizing potential
- * errors and vulnerabilities.
- *
- * @package     ArrayPress/Utils/S3/Sanitization
- * @copyright   Copyright (c) 2023, ArrayPress Limited
- * @license     GPL2+
- * @since       1.0.0
- * @author      David Sherlock
- * @description Provides utility methods for sanitizing and validating S3-related parameters.
+ * @package       arraypress/s3-utilities
+ * @author        David Sherlock
+ * @license       GPL2+
+ * @version       1.0.0
+ * @description   Methods for sanitizing various parameters related to Amazon S3, ensuring data safety and protocol
+ *                compliance.
  */
 
-namespace ArrayPress\Utils\S3;
+namespace ArrayPress\S3;
 
 /**
- * Check if the class `Sanitization` is defined, and if not, define it.
+ * Check if the class `Sanitize` is defined, and if not, define it.
  */
 if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 
@@ -39,18 +42,86 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 	class Sanitize {
 
 		/**
+		 * Regular expression for sanitizing AWS access key ID and secret access key.
+		 * This regex removes any characters that are not alphanumeric.
+		 *
+		 * @var string
+		 */
+		const AWS_KEY_SANITIZE_REGEX = '/[^A-Za-z0-9]/';
+
+		/**
+		 * Regular expression for sanitizing S3 object keys.
+		 * This regex allows alphanumeric characters, hyphens, underscores, dots, and slashes.
+		 *
+		 * @var string
+		 */
+		const OBJECT_KEY_SANITIZE_REGEX = '/[^a-zA-Z0-9\-_\.\/]/';
+
+		/**
+		 * Regular expression for sanitizing S3 bucket names.
+		 * This regex permits lowercase letters, numbers, hyphens, and dots in the bucket names.
+		 *
+		 * @var string
+		 */
+		const BUCKET_NAME_SANITIZE_REGEX = '/[^a-z0-9\-\.]/';
+
+		/**
+		 * Regular expression for sanitizing S3 region strings.
+		 * This regex matches strings containing lowercase letters, numbers, and hyphens.
+		 *
+		 * @var string
+		 */
+		const REGION_SANITIZE_REGEX = '/[^a-z0-9\-]/';
+
+		/**
+		 * Regular expression for validating the top-level domain (TLD) of an endpoint.
+		 * This regex ensures that the endpoint has a valid TLD, allowing for second-level domains.
+		 * It matches a period followed by two or more lowercase letters, and optionally another period
+		 * and two or more lowercase letters, appearing at the end of the string.
+		 *
+		 * Example:
+		 * Input: "https://my.endpoint.com/"
+		 * Output: true (valid)
+		 *
+		 * @var string
+		 */
+		const ENDPOINT_TLD_SANITIZE_REGEX = '/\.[a-z]{2,}(?:\.[a-z]{2,})?$/';
+
+		/**
+		 * Regular expression for sanitizing domain names in S3 endpoints.
+		 * This regex ensures that only valid characters for domain names are retained.
+		 *
+		 * @var string
+		 */
+		const DOMAIN_SANITIZE_REGEX = '/[^a-zA-Z0-9\-\.]/';
+
+		/**
+		 * Regular expression for sanitizing extra query strings.
+		 * This regex allows alphanumeric characters, hyphens, underscores, equals signs, and ampersands.
+		 *
+		 * @var string
+		 */
+		const QUERY_STRING_SANITIZE_REGEX = '/[^a-zA-Z0-9\-_=&]/';
+
+		/**
+		 * Regular expression for sanitizing generic keys.
+		 * This regex permits only lowercase letters, numbers, underscores, or hyphens.
+		 *
+		 * @var string
+		 */
+		const KEY_SANITIZE_REGEX = '/[^a-z0-9_\-]/';
+
+		/**
 		 * Sanitize AWS access key ID.
 		 *
 		 * Removes any non-alphanumeric characters from the access key ID.
 		 *
-		 * @param mixed $key The AWS access key ID to sanitize.
+		 * @param string $accessKey The AWS access key ID to sanitize.
 		 *
 		 * @return string The sanitized access key ID.
 		 */
-		public static function access_key( $key ): string {
-			return is_string( $key )
-				? preg_replace( '/[^A-Za-z0-9]/', '', $key )
-				: '';
+		public static function accessKey( string $accessKey ): string {
+			return preg_replace( self::AWS_KEY_SANITIZE_REGEX, '', $accessKey );
 		}
 
 		/**
@@ -58,14 +129,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 *
 		 * Removes any non-alphanumeric characters from the secret access key.
 		 *
-		 * @param mixed $key The AWS secret access key to sanitize.
+		 * @param string $secretKey The AWS secret access key to sanitize.
 		 *
 		 * @return string The sanitized secret access key.
 		 */
-		public static function secret_key( $key ): string {
-			return is_string( $key )
-				? preg_replace( '/[^A-Za-z0-9]/', '', $key )
-				: '';
+		public static function secretKey( string $secretKey ): string {
+			return preg_replace( self::AWS_KEY_SANITIZE_REGEX, '', $secretKey );
 		}
 
 		/**
@@ -75,14 +144,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 * Input: "my_folder/my_file.txt*"
 		 * Output: "my_folder/my_file.txt"
 		 *
-		 * @param mixed $key The S3 object key to sanitize.
+		 * @param string $objectKey The S3 object key to sanitize.
 		 *
 		 * @return string The sanitized S3 object key.
 		 */
-		public static function object_key( $key ): string {
-			return is_string( $key )
-				? preg_replace( '/[^a-zA-Z0-9\-_\.\/]/', '', $key )
-				: '';
+		public static function objectKey( string $objectKey ): string {
+			return preg_replace( self::OBJECT_KEY_SANITIZE_REGEX, '', $objectKey );
 		}
 
 		/**
@@ -96,10 +163,8 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 *
 		 * @return string The sanitized bucket name.
 		 */
-		public static function bucket( $bucket ): string {
-			return is_string( $bucket )
-				? preg_replace( '/[^a-z0-9\-\.]/', '', $bucket )
-				: '';
+		public static function bucket( string $bucket ): string {
+			return preg_replace( self::BUCKET_NAME_SANITIZE_REGEX, '', $bucket );
 		}
 
 		/**
@@ -109,14 +174,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 * Input: "us-west-1_extra"
 		 * Output: "us-west-1"
 		 *
-		 * @param mixed $region The S3 region string to sanitize.
+		 * @param string $region The S3 region string to sanitize.
 		 *
 		 * @return string The sanitized S3 region string.
 		 */
-		public static function region( $region ): string {
-			return is_string( $region )
-				? preg_replace( '/[^a-z0-9\-]/', '', $region )
-				: '';
+		public static function region( string $region ): string {
+			return preg_replace( self::REGION_SANITIZE_REGEX, '', $region );
 		}
 
 		/**
@@ -126,14 +189,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 * Input: "https://my.endpoint.com/"
 		 * Output: "my.endpoint.com"
 		 *
-		 * @param mixed $endpoint The endpoint to sanitize.
+		 * @param string $endpoint The endpoint to sanitize.
 		 *
 		 * @return string The sanitized endpoint.
 		 */
-		public static function endpoint( $endpoint ): string {
-			if ( ! is_string( $endpoint ) ) {
-				return ''; // Return empty string or handle accordingly
-			}
+		public static function endpoint( string $endpoint ): string {
 
 			// Remove any protocol prefixes
 			$sanitized = preg_replace( '#^https?://#', '', rtrim( $endpoint, '/' ) );
@@ -144,55 +204,48 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 			}
 
 			// Ensure that the endpoint has a valid TLD
-			if ( ! preg_match( '/\.[a-z]{2,}(?:\.[a-z]{2,})?$/', $sanitized ) ) {
+			if ( ! preg_match( self::ENDPOINT_TLD_SANITIZE_REGEX, $sanitized ) ) {
 				return ''; // Return empty string or handle accordingly
 			}
 
 			// Finally, strip any invalid characters
-			return preg_replace( '/[^a-zA-Z0-9\-\.]/', '', $sanitized );
+			return preg_replace( self::DOMAIN_SANITIZE_REGEX, '', $sanitized );
 		}
 
 		/**
 		 * Sanitize a value as a positive integer representing a duration.
 		 *
-		 * @param mixed $duration The value to sanitize.
+		 * @param int $duration The value to sanitize.
 		 *
 		 * @return int The sanitized duration as a positive integer.
 		 */
-		public static function duration( $duration ): int {
-			return abs( (int) $duration );
+		public static function duration( int $duration ): int {
+			return abs( $duration );
 		}
 
 		/**
 		 * Sanitize the extra query string by removing any unsafe characters.
 		 *
-		 * @param mixed $extra_query_string The extra query string to sanitize.
+		 * @param string $extraQueryString The extra query string to sanitize.
 		 *
 		 * @return string The sanitized extra query string.
 		 */
-		public static function extra_query_string( $extra_query_string ): string {
-			return is_string( $extra_query_string )
-				? preg_replace( '/[^a-zA-Z0-9\-_=&]/', '', $extra_query_string )
-				: '';
+		public static function extra_query_string( string $extraQueryString ): string {
+			return preg_replace( self::QUERY_STRING_SANITIZE_REGEX, '', $extraQueryString );
 		}
 
 		/**
 		 * Sanitizes a key string by ensuring it contains only lowercase letters, numbers, underscores, or hyphens.
 		 *
-		 * @param mixed $key The input key to be sanitized.
+		 * @param string $key The input key to be sanitized.
 		 *
 		 * @return string The sanitized key.
 		 */
-		public static function key( $key ): string {
-			$sanitized_key = '';
+		public static function key( string $key ): string {
+			$sanitized_key = trim( $key );
+			$sanitized_key = strtolower( $sanitized_key );
 
-			if ( is_scalar( $key ) ) {
-				$sanitized_key = trim( $key );
-				$sanitized_key = strtolower( $sanitized_key );
-				$sanitized_key = preg_replace( '/[^a-z0-9_\-]/', '', $sanitized_key );
-			}
-
-			return $sanitized_key;
+			return preg_replace( self::KEY_SANITIZE_REGEX, '', $sanitized_key );
 		}
 
 		/**
@@ -213,24 +266,18 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 *
 		 * @return string The sanitized string with special characters converted to HTML entities.
 		 */
-		public static function html( $data ): string {
-			return is_string( $data )
-				? htmlspecialchars( $data, ENT_QUOTES, 'UTF-8' )
-				: '';
+		public static function html( string $data ): string {
+			return htmlspecialchars( $data, ENT_QUOTES, 'UTF-8' );
 		}
 
 		/**
 		 * Sanitize a given URL.
 		 *
-		 * @param mixed $url The raw URL to sanitize.
+		 * @param string $url The raw URL to sanitize.
 		 *
 		 * @return string The sanitized URL or an empty string if invalid.
 		 */
-		public static function url( $url ): string {
-			if ( ! is_string( $url ) ) {
-				return ''; // Return empty string or handle accordingly
-			}
-
+		public static function url( string $url ): string {
 			$clean_url = filter_var( $url, FILTER_SANITIZE_URL );
 			if ( filter_var( $clean_url, FILTER_VALIDATE_URL ) ) {
 				return $clean_url;

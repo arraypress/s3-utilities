@@ -1,5 +1,5 @@
 {
-  "name": "arraypress/s3-sanitization",
+  "name": "arraypress/s3-utilities",
   "description": "Offers utility methods for cleansing and validating input parameters associated with S3 operations.",
   "type": "library",
   "license": "GPL-2.0-or-later",
@@ -7,7 +7,7 @@
   "require": {},
   "autoload": {
     "psr-4": {
-      "ArrayPress\\Utils\\S3\\": "src/"
+      "ArrayPress\\S3\\": "src/"
     }
   }
 }

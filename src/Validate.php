@@ -1,31 +1,30 @@
 <?php
 /**
- * The Validation class provides utility methods for validating and ensuring the integrity of input parameters
- * related to Amazon S3 operations.
+ * The `Validate` class in the ArrayPress\S3 namespace is a comprehensive validation utility specifically
+ * tailored for Amazon S3 operations. This class is part of the arraypress/s3-utilities package and provides a robust
+ * set of methods to ensure the integrity and correctness of various input parameters related to AWS S3 services.
  *
- * This class offers methods to:
+ * Capabilities of the `Validate` class include:
+ * - Ensuring AWS access key IDs and secret access keys are properly formatted with alphanumeric characters.
+ * - Verifying the format of S3 object keys, allowing only a defined set of safe characters.
+ * - Confirming that S3 bucket names adhere to Amazon S3's strict naming conventions.
+ * - Checking S3 region strings for compliance with expected format requirements.
+ * - Validating S3 endpoint URLs to be well-formed and free of protocol specifications.
+ * - Confirming the positivity and integer nature of duration values.
+ * - Ensuring that query strings are composed of only permitted characters.
  *
- * - Validate AWS access key IDs and secret access keys to ensure they consist of alphanumeric characters.
- * - Validate S3 object keys to ensure they contain only safe and permissible characters.
- * - Validate S3 bucket names to ensure they follow Amazon S3's naming conventions.
- * - Validate S3 region strings to ensure they meet the required format.
- * - Check the validity of S3 endpoint URLs without a protocol.
- * - Validate duration values to ensure they are positive integers.
- * - Check if query strings contain only valid characters.
+ * Through its focused validation methods, the `Validate` class enhances security and reliability in handling
+ * S3-related data, effectively minimizing potential errors and vulnerabilities in S3 operations.
  *
- * By offering dedicated validation methods, this class ensures that Amazon S3-related data is consistently
- * and securely processed, reducing the risk of errors and vulnerabilities.
- *
- * @package     ArrayPress\Utils\S3
- * @subpackage  Validation
- * @copyright   Copyright (c) 2023, ArrayPress Limited
- * @license     GPL2+
- * @since       1.0.0
- * @author      David Sherlock
- * @description Provides utility methods for validating Amazon S3-related parameters.
+ * @package       arraypress/s3-utilities
+ * @author        David Sherlock
+ * @license       GPL2+
+ * @version       1.0.0
+ * @description   Utility methods for validating Amazon S3-related parameters, ensuring data integrity and compliance
+ *                with AWS standards.
  */
 
-namespace ArrayPress\Utils\S3;
+namespace ArrayPress\S3;
 
 use InvalidArgumentException;
 
@@ -42,46 +41,74 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 	class Validate {
 
 		/**
-		 * Check if a value is valid using a specified validation method.
+		 * Regular expression for validating alphanumeric strings.
+		 * This regex matches strings that consist only of letters (both upper and lower case) and numbers.
 		 *
-		 * @param mixed  $value       The value to validate.
-		 * @param string $method_name The name of the validation method to call.
-		 *
-		 * @return bool True if the value is valid according to the specified method, false otherwise.
+		 * @var string
 		 */
-		public static function is_valid( $value, string $method_name ): bool {
-			if ( method_exists( self::class, $method_name ) ) {
-				try {
-					// Call the specified validation method
-					self::$method_name( $value );
+		const ALPHANUMERIC_REGEX = '/^[A-Za-z0-9]+$/';
 
-					return true; // Return true if validation passes
-				} catch ( InvalidArgumentException $e ) {
-					// Catch any exceptions and return false
-					return false;
-				}
-			} else {
-				// If the method doesn't exist, return false
-				return false;
-			}
-		}
+		/**
+		 * Regular expression for validating S3 object keys.
+		 * This regex allows alphanumeric characters, hyphens, underscores, dots, and slashes.
+		 *
+		 * @var string
+		 */
+		const OBJECT_KEY_REGEX = '/^[a-zA-Z0-9\-_\.\/]*$/';
+
+		/**
+		 * Regular expression for validating S3 bucket names.
+		 * This regex permits lowercase letters, numbers, hyphens, and dots in the bucket names.
+		 *
+		 * @var string
+		 */
+		const BUCKET_NAME_REGEX = '/^[a-z0-9\-\.]+$/';
+
+		/**
+		 * Regular expression for validating S3 region strings.
+		 * This regex matches strings containing lowercase letters, numbers, and hyphens.
+		 *
+		 * @var string
+		 */
+		const REGION_REGEX = '/^[a-z0-9\-]+$/';
+
+		/**
+		 * Regular expression for validating domain names in S3 endpoints.
+		 * This regex ensures that the domain has a valid top-level domain (TLD) structure.
+		 *
+		 * @var string
+		 */
+		const DOMAIN_TLD_REGEX = '/\.[a-z]{2,}(?:\.[a-z]{2,})?$/';
+
+		/**
+		 * Regular expression for sanitizing strings to contain only alphanumeric characters, hyphens, and dots.
+		 * This regex is used to remove any characters not matching the specified set.
+		 *
+		 * @var string
+		 */
+		const ALNUM_HYPHEN_DOT_REGEX = '/[^a-zA-Z0-9\-\.]/';
+
+		/**
+		 * Regular expression for validating query strings.
+		 * This regex allows alphanumeric characters, hyphens, underscores, equals signs, and ampersands.
+		 *
+		 * @var string
+		 */
+		const QUERY_STRING_REGEX = '/^[a-zA-Z0-9\-_=&]*$/';
 
 		/**
 		 * Validate AWS access key ID.
 		 *
-		 * @param mixed $key The AWS access key ID to validate.
+		 * @param string $accessKey The AWS access key ID to validate.
 		 *
 		 * @return bool True if valid.
 		 * @throws InvalidArgumentException If the access key ID is invalid.
 		 */
-		public static function access_key( $key ): bool {
-			if ( empty( $key ) ) {
+		public static function accessKey( string $accessKey ): bool {
+			if ( empty( $accessKey ) ) {
 				throw new InvalidArgumentException( "Access key ID cannot be empty." );
 			}
-			if ( ! is_string( $key ) ) {
-				throw new InvalidArgumentException( "Access key ID must be a string." );
-			}
-			if ( ! preg_match( '/^[A-Za-z0-9]+$/', $key ) ) {
+			if ( ! preg_match( self::ALPHANUMERIC_REGEX, $accessKey ) ) {
 				throw new InvalidArgumentException( "Invalid AWS access key ID characters. It should be alphanumeric." );
 			}
 
@@ -91,19 +118,16 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		/**
 		 * Validate AWS secret access key.
 		 *
-		 * @param mixed $key The AWS secret access key to validate.
+		 * @param string $secretKey The AWS secret access key to validate.
 		 *
 		 * @return bool True if valid.
 		 * @throws InvalidArgumentException If the secret access key is invalid.
 		 */
-		public static function secret_key( $key ): bool {
-			if ( empty( $key ) ) {
+		public static function secretKey( string $secretKey ): bool {
+			if ( empty( $secretKey ) ) {
 				throw new InvalidArgumentException( "Secret key cannot be empty." );
 			}
-			if ( ! is_string( $key ) ) {
-				throw new InvalidArgumentException( "Secret key must be a string." );
-			}
-			if ( ! preg_match( '/^[A-Za-z0-9]+$/', $key ) ) {
+			if ( ! preg_match( self::ALPHANUMERIC_REGEX, $secretKey ) ) {
 				throw new InvalidArgumentException( "Invalid AWS secret access key characters. It should be alphanumeric." );
 			}
 
@@ -117,18 +141,15 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * Input: "my_folder/my_file.txt*"
 		 * Output: false
 		 *
-		 * @param mixed $key The S3 object key to validate.
+		 * @param string $objectKey The S3 object key to validate.
 		 *
 		 * @throws InvalidArgumentException If the key is invalid.
 		 */
-		public static function object_key( $key ): bool {
-			if ( empty( $key ) ) {
+		public static function objectKey( string $objectKey ): bool {
+			if ( empty( $objectKey ) ) {
 				throw new InvalidArgumentException( "Object key cannot be empty." );
 			}
-			if ( ! is_string( $key ) ) {
-				throw new InvalidArgumentException( "Object key must be a string." );
-			}
-			if ( ! preg_match( '/^[a-zA-Z0-9\-_\.\/]*$/', $key ) ) {
+			if ( ! preg_match( self::OBJECT_KEY_REGEX, $objectKey ) ) {
 				throw new InvalidArgumentException( "Invalid S3 object key. Only alphanumeric characters, hyphens, underscores, dots, and slashes are allowed." );
 			}
 
@@ -142,17 +163,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * Input: "my.bucket-123"
 		 * Output: true
 		 *
-		 * @param mixed $bucket The bucket name to validate.
+		 * @param string $bucket The bucket name to validate.
 		 *
 		 * @return bool True if the bucket name is valid.
 		 * @throws InvalidArgumentException If the bucket name is invalid.
 		 */
-		public static function bucket( $bucket ): bool {
+		public static function bucket( string $bucket ): bool {
 			if ( empty( $bucket ) ) {
 				throw new InvalidArgumentException( "Bucket name cannot be empty." );
-			}
-			if ( ! is_string( $bucket ) ) {
-				throw new InvalidArgumentException( "Bucket name must be a string." );
 			}
 
 			// Check length
@@ -162,7 +180,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 			}
 
 			// Check characters
-			if ( ! preg_match( '/^[a-z0-9\-\.]+$/', $bucket ) ) {
+			if ( ! preg_match( self::BUCKET_NAME_REGEX, $bucket ) ) {
 				throw new InvalidArgumentException( "Invalid bucket name characters. Only lowercase letters, numbers, hyphens, and dots are allowed." );
 			}
 
@@ -176,19 +194,16 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * Input: "us-west-1"
 		 * Output: true
 		 *
-		 * @param mixed $region The S3 region string to check.
+		 * @param string $region The S3 region string to check.
 		 *
 		 * @return bool True if the region is valid.
 		 * @throws InvalidArgumentException If the region is invalid.
 		 */
-		public static function region( $region ): bool {
+		public static function region( string $region ): bool {
 			if ( empty( $region ) ) {
 				throw new InvalidArgumentException( "Region cannot be empty." );
 			}
-			if ( ! is_string( $region ) ) {
-				throw new InvalidArgumentException( "Region must be a string." );
-			}
-			if ( ! preg_match( '/^[a-z0-9\-]+$/', $region ) ) {
+			if ( ! preg_match( self::REGION_REGEX, $region ) ) {
 				throw new InvalidArgumentException( "Invalid S3 region. It should contain only lowercase letters, numbers, and hyphens." );
 			}
 
@@ -202,17 +217,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		 * Input: "https://my.endpoint.com/"
 		 * Output: true (valid)
 		 *
-		 * @param mixed $endpoint The endpoint to check.
+		 * @param string $endpoint The endpoint to check.
 		 *
 		 * @return bool True if the endpoint is valid.
 		 * @throws InvalidArgumentException If the endpoint is invalid.
 		 */
-		public static function endpoint( $endpoint ): bool {
+		public static function endpoint( string $endpoint ): bool {
 			if ( empty( $endpoint ) ) {
 				throw new InvalidArgumentException( "Endpoint cannot be empty." );
-			}
-			if ( ! is_string( $endpoint ) ) {
-				throw new InvalidArgumentException( "Endpoint must be a string." );
 			}
 
 			// Remove any protocol prefixes
@@ -224,12 +236,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 			}
 
 			// Ensure that the endpoint has a valid TLD
-			if ( ! preg_match( '/\.[a-z]{2,}(?:\.[a-z]{2,})?$/', $sanitized ) ) {
+			if ( ! preg_match( self::DOMAIN_TLD_REGEX, $sanitized ) ) {
 				throw new InvalidArgumentException( "Invalid top-level domain in the endpoint." );
 			}
 
 			// Finally, strip any invalid characters
-			$sanitized = preg_replace( '/[^a-zA-Z0-9\-\.]/', '', $sanitized );
+			$sanitized = preg_replace( self::ALNUM_HYPHEN_DOT_REGEX, '', $sanitized );
 
 			// Check if the sanitized endpoint is empty
 			if ( empty( $sanitized ) ) {
@@ -242,17 +254,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		/**
 		 * Validate if a value is a valid duration (positive integer representing a duration).
 		 *
-		 * @param mixed $duration The value to check.
+		 * @param int $duration The value to check.
 		 *
 		 * @return bool True if the duration is valid.
 		 * @throws InvalidArgumentException If the duration is invalid.
 		 */
-		public static function duration( $duration ): bool {
+		public static function duration( int $duration ): bool {
 			if ( empty( $duration ) ) {
 				throw new InvalidArgumentException( "Duration cannot be empty." );
-			}
-			if ( ! is_int( $duration ) ) {
-				throw new InvalidArgumentException( "Duration must be an integer." );
 			}
 			if ( $duration <= 0 ) {
 				throw new InvalidArgumentException( "Duration must be a positive integer." );
@@ -264,35 +273,16 @@ if ( ! class_exists( __NAMESPACE__ . '\\Validate' ) ) :
 		/**
 		 * Check if the query string contains only valid characters.
 		 *
-		 * @param mixed $query_string The query string to check.
+		 * @param string $queryString The query string to check.
 		 *
 		 * @return bool True if the query string is valid.
 		 * @throws InvalidArgumentException If the query string is invalid.
 		 */
-		public static function extra_query_string( $query_string ): bool {
-			if ( ! empty( $query_string ) ) {
-				if ( ! is_string( $query_string ) ) {
-					throw new InvalidArgumentException( "Query string must be a string." );
-				}
-				if ( ! preg_match( '/^[a-zA-Z0-9\-_=&]*$/', $query_string ) ) {
+		public static function extraQueryString( string $queryString ): bool {
+			if ( ! empty( $queryString ) ) {
+				if ( ! preg_match( self::QUERY_STRING_REGEX, $queryString ) ) {
 					throw new InvalidArgumentException( "Invalid query string characters." );
 				}
-			}
-
-			return true;
-		}
-
-		/**
-		 * Validate if a value is a valid boolean.
-		 *
-		 * @param mixed $value The value to check.
-		 *
-		 * @return bool True if the value is a valid boolean.
-		 * @throws InvalidArgumentException If the value is not a valid boolean.
-		 */
-		public static function path_style( $value ): bool {
-			if ( ! is_bool( $value ) ) {
-				throw new InvalidArgumentException( "Path style must be a boolean." );
 			}
 
 			return true;

@@ -11,15 +11,15 @@
  * By offering dedicated serialization methods, this class ensures that S3-related data is consistently
  * and securely processed, reducing the risk of errors and vulnerabilities.
  *
- * @package     ArrayPress/Utils/S3/Sanitization
- * @copyright   Copyright (c) 2023, ArrayPress Limited
- * @license     GPL2+
- * @since       1.0.0
- * @author      David Sherlock
- * @description Provides utility methods for encoding, decoding, and sanitizing S3-related parameters.
+ * @package       arraypress/s3-utilities
+ * @copyright     Copyright (c) 2023, ArrayPress Limited
+ * @license       GPL2+
+ * @since         1.0.0
+ * @author        David Sherlock
+ * @description   Provides utility methods for encoding, decoding, and sanitizing S3-related parameters.
  */
 
-namespace ArrayPress\Utils\S3;
+namespace ArrayPress\S3;
 
 /**
  * Check if the class `Serialization` is defined, and if not, define it.
@@ -44,7 +44,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Serialization' ) ) :
 		 *
 		 * @return string Returns the encoded key
 		 */
-		public static function encode_object_name( string $key ): string {
+		public static function encodeObjectName( string $key ): string {
 			$key = str_replace( '+', ' ', $key );
 
 			return str_replace( '%2F', '/', rawurlencode( $key ) );
@@ -61,7 +61,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Serialization' ) ) :
 		 *
 		 * @return string Returns the decoded key.
 		 */
-		public static function decode_object_name( string $key ): string {
+		public static function decodeObjectName( string $key ): string {
 			return rawurldecode( str_replace( ' ', '+', $key ) );
 		}
 
