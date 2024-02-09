@@ -1,14 +1,22 @@
 # S3 Utilities Library
 
-The S3 Utilities Library is a comprehensive toolkit designed for developers working with Amazon S3 and S3-compatible storage solutions. This library encompasses a wide range of functionalities including sanitization, validation, and serialization of S3 parameters, ensuring adherence to AWS standards and enhancing the safety and efficiency of cloud storage operations.
+The S3 Utilities Library is a comprehensive toolkit designed for developers working with Amazon S3 and S3-compatible
+storage solutions. This library encompasses a wide range of functionalities including sanitization, validation, and
+serialization of S3 parameters, ensuring adherence to AWS standards and enhancing the safety and efficiency of cloud
+storage operations.
 
 **Key Features:**
 
-- **Comprehensive Sanitization:** Ensures that bucket names, object keys, endpoints, and other parameters conform to S3 standards by removing or replacing invalid characters.
-- **Robust Validation:** Validates inputs to ensure they meet specific criteria for AWS access keys, bucket names, object keys, and more, preventing common errors.
-- **Advanced Serialization:** Facilitates the correct encoding and decoding of object keys, crucial for handling special characters in S3 object paths.
-- **Wide Compatibility:** Designed to work seamlessly with AWS S3 and various S3-compatible services like Linode, DigitalOcean Spaces, and BackBlaze.
-- **Utility Functions:** Provides helper functions for validation and sanitization, simplifying common tasks and streamlining development.
+- **Comprehensive Sanitization:** Ensures that bucket names, object keys, endpoints, and other parameters conform to S3
+  standards by removing or replacing invalid characters.
+- **Robust Validation:** Validates inputs to ensure they meet specific criteria for AWS access keys, bucket names,
+  object keys, and more, preventing common errors.
+- **Advanced Serialization:** Facilitates the correct encoding and decoding of object keys, crucial for handling special
+  characters in S3 object paths.
+- **Wide Compatibility:** Designed to work seamlessly with AWS S3 and various S3-compatible services like Linode,
+  DigitalOcean Spaces, and BackBlaze.
+- **Utility Functions:** Provides helper functions for validation and sanitization, simplifying common tasks and
+  streamlining development.
 
 Ensure your cloud storage interactions are optimized, secure, and compliant by leveraging the S3 Utilities Library.
 
@@ -32,119 +40,275 @@ Include the Composer autoloader in your project to access the library:
 require_once __DIR__ . '/vendor/autoload.php';
 ```
 
-## Usage Examples
+## Sanitize Class Examples
 
-**Sanitize::accessKey (Sanitizing AWS Access Key ID):**
+The `Sanitize` class provides comprehensive methods for sanitizing various parameters for Amazon S3 operations, ensuring
+compliance with AWS S3 standards and enhancing data safety.
+
+### accessKey (Sanitizing AWS Access Key ID)
 
 ```php
 use ArrayPress\S3\Sanitize;
 
-echo Sanitize::accessKey("AKIAIOSFODNN7EXAMPLE");
-// Outputs: "AKIAIOSFODNN7EXAMPLE"
+$accessKey = "AKIA1234EXAMPLE!@#$%";
+$sanitizedAccessKey = Sanitize::accessKey($accessKey);
+echo $sanitizedAccessKey; // Outputs: "AKIA1234EXAMPLE"
 ```
 
-**Sanitize::secretKey (Sanitizing AWS Secret Access Key):**
+### secretKey (Sanitizing AWS Secret Access Key)
 
 ```php
-echo Sanitize::secretKey("wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
-// Outputs: "wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY"
+$secretKey = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY%^&*";
+$sanitizedSecretKey = Sanitize::secretKey($secretKey);
+echo $sanitizedSecretKey; // Outputs: "wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY"
 ```
 
-**Sanitize::bucket (Sanitizing Bucket Names):**
+### objectKey (Sanitizing S3 Object Keys)
 
 ```php
-echo Sanitize::bucket("My_Bucket-Name.123");
-// Outputs: "my-bucket-name.123"
+$objectKey = "my_folder/my_file.txt*";
+$sanitizedObjectKey = Sanitize::objectKey($objectKey);
+echo $sanitizedObjectKey; // Outputs: "my_folder/my_file.txt"
 ```
 
-**Sanitize::objectKey (Sanitizing Object Keys):**
+### bucket (Sanitizing Bucket Names)
 
 ```php
-echo Sanitize::objectKey("my_folder/my_file.txt*");
-// Outputs: "my_folder/my_file.txt"
+$bucketName = "My_Bucket-Name.123!";
+$sanitizedBucketName = Sanitize::bucket($bucketName);
+echo $sanitizedBucketName; // Outputs: "my-bucket-name.123"
 ```
 
-**Sanitize::region (Sanitizing S3 Region Strings):**
+### region (Sanitizing S3 Region Strings)
 
 ```php
-echo Sanitize::region("us-west-1_extra");
-// Outputs: "us-west-1"
+$region = "us-west-1_extra";
+$sanitizedRegion = Sanitize::region($region);
+echo $sanitizedRegion; // Outputs: "us-west-1"
 ```
 
-**Sanitize::endpoint (Sanitizing Endpoints):**
+### endpoint (Sanitizing Endpoints)
 
 ```php
-echo Sanitize::endpoint("https://my.endpoint.com/");
-// Outputs: "my.endpoint.com"
+$endpoint = "https://my.endpoint.com/";
+$sanitizedEndpoint = Sanitize::endpoint($endpoint);
+echo $sanitizedEndpoint; // Outputs: "my.endpoint.com"
 ```
 
-**Validate::accessKey (Validating AWS Access Key ID):**
+### duration (Sanitizing Duration Values)
+
+```php
+$duration = -60;
+$sanitizedDuration = Sanitize::duration($duration);
+echo $sanitizedDuration; // Outputs: 60
+```
+
+### extra_query_string (Sanitizing Extra Query Strings)
+
+```php
+$extraQueryString = "param1=value1&param2=value2!";
+$sanitizedQueryString = Sanitize::extra_query_string($extraQueryString);
+echo $sanitizedQueryString; // Outputs: "param1=value1&param2=value2"
+```
+
+### key (Sanitizing Generic Keys)
+
+```php
+$key = "my_key-123!";
+$sanitizedKey = Sanitize::key($key);
+echo $sanitizedKey; // Outputs: "my_key-123"
+```
+
+### bool (Sanitizing Boolean Values)
+
+```php
+$boolValue = "true";
+$sanitizedBool = Sanitize::bool($boolValue);
+echo $sanitizedBool ? 'true' : 'false'; // Outputs: true
+```
+
+### html (Sanitizing HTML Strings)
+
+```php
+$htmlString = "<div>Some content</div>";
+$sanitizedHtml = Sanitize::html($htmlString);
+echo $sanitizedHtml; // Outputs: "&lt;div&gt;Some content&lt;/div&gt;"
+```
+
+### url (Sanitizing URLs)
+
+```php
+$url = "http://example.com/page?query=<unsafe string>";
+$sanitizedUrl = Sanitize::url($url);
+echo $sanitizedUrl; // Outputs: "http://example.com/page?query=%3Cunsafe%20string%3E"
+```
+
+## Validate Class Examples
+
+The `Validate` class offers a range of methods to ensure that your Amazon S3 operations use correctly formatted and
+compliant parameters.
+
+### accessKey (Validating AWS Access Key ID)
 
 ```php
 use ArrayPress\S3\Validate;
 
-if (Validate::accessKey("AKIAIOSFODNN7EXAMPLE")) {
+try {
+    Validate::accessKey("AKIA1234EXAMPLE");
     echo "Access key is valid.";
-} else {
-    echo "Access key is invalid.";
+} catch (InvalidArgumentException $e) {
+    echo "Access key validation error: " . $e->getMessage();
 }
 ```
 
-**Validate::secretKey (Validating AWS Secret Access Key):**
+### secretKey (Validating AWS Secret Access Key)
 
 ```php
-if (Validate::secretKey("wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")) {
+try {
+    Validate::secretKey("wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
     echo "Secret key is valid.";
-} else {
-    echo "Secret key is invalid.";
+} catch (InvalidArgumentException $e) {
+    echo "Secret key validation error: " . $e->getMessage();
 }
 ```
 
-**Validate::bucket (Validating Bucket Names):**
+### objectKey (Validating S3 Object Keys)
 
 ```php
-if (Validate::bucket("my-bucket-name.123")) {
-    echo "Bucket name is valid.";
-} else {
-    echo "Bucket name is invalid.";
-}
-```
-
-**Validate::objectKey (Validating Object Keys):**
-
-```php
-if (Validate::objectKey("my_folder/my_file.txt")) {
+try {
+    Validate::objectKey("my_folder/my_file.txt");
     echo "Object key is valid.";
-} else {
-    echo "Object key is invalid.";
+} catch (InvalidArgumentException $e) {
+    echo "Object key validation error: " . $e->getMessage();
 }
 ```
 
-**Validate::region (Validating S3 Region Strings):**
+### bucket (Validating Bucket Names)
 
 ```php
-if (Validate::region("us-west-1")) {
-    echo "Region is valid.";
-} else {
-    echo "Region is invalid.";
+try {
+    Validate::bucket("my-bucket-name.123");
+    echo "Bucket name is valid.";
+} catch (InvalidArgumentException $e) {
+    echo "Bucket name validation error: " . $e->getMessage();
 }
 ```
 
-**Serialization::encodeObjectName (Encoding Object Names):**
+### region (Validating S3 Region Strings)
+
+```php
+try {
+    Validate::region("us-west-1");
+    echo "Region is valid.";
+} catch (InvalidArgumentException $e) {
+    echo "Region validation error: " . $e->getMessage();
+}
+```
+
+### endpoint (Validating Endpoints)
+
+```php
+try {
+    Validate::endpoint("my.endpoint.com");
+    echo "Endpoint is valid.";
+} catch (InvalidArgumentException $e) {
+    echo "Endpoint validation error: " . $e->getMessage();
+}
+```
+
+### duration (Validating Duration Values)
+
+```php
+try {
+    Validate::duration(60);
+    echo "Duration is valid.";
+} catch (InvalidArgumentException $e) {
+    echo "Duration validation error: " . $e->getMessage();
+}
+```
+
+### extraQueryString (Validating Extra Query Strings)
+
+```php
+try {
+    Validate::extraQueryString("param1=value1&param2=value2");
+    echo "Extra query string is valid.";
+} catch (InvalidArgumentException $e) {
+    echo "Extra query string validation error: " . $e->getMessage();
+}
+```
+
+## Serialization Class Examples
+
+The `Serialization` class facilitates the encoding and decoding of S3 object keys to ensure safe and compliant storage
+paths.
+
+### encodeObjectName (Encoding S3 Object Names)
+
+Encoding S3 object names into URL-safe representations is crucial for handling special characters correctly, especially
+when dealing with file paths that include spaces or reserved characters.
 
 ```php
 use ArrayPress\S3\Serialization;
 
-echo Serialization::encodeObjectName("my folder/my file.txt");
-// Outputs: "my%20folder/my%20file.txt"
+$objectName = "my folder/my file.txt";
+$encodedObjectName = Serialization::encodeObjectName($objectName);
+echo $encodedObjectName; // Outputs: "my%20folder/my%20file.txt"
 ```
 
-**Serialization::decodeObjectName (Decoding Object Names):**
+This method ensures that spaces are encoded as `%20` and slashes (`/`) are preserved, making the string safe for use in
+URLs while retaining its significance as a path delimiter.
+
+### decodeObjectName (Decoding URL-encoded S3 Object Keys)
+
+Decoding is as important as encoding, especially when you need to retrieve and accurately identify resources based on
+URL-encoded paths.
 
 ```php
-echo Serialization::decodeObjectName("my%20folder/my%20file.txt");
-// Outputs: "my folder/my file.txt"
+$encodedKey = "my%20folder/my%20file.txt";
+$decodedKey = Serialization::decodeObjectName($encodedKey);
+echo $decodedKey; // Outputs: "my folder/my file.txt"
 ```
+
+This method converts URL-encoded representations back to their original form, allowing for the correct identification
+and handling of object names within your application.
+
+By utilizing these serialization methods, you can ensure that object names are consistently and securely processed
+across your S3 operations, minimizing the risk of errors and enhancing data management practices.
+
+## Helper Functions for S3 Operations
+
+The helper functions `validate` and `sanitize` offer simplified interfaces for validating and sanitizing data respectively, by leveraging the `Validate` and `Sanitize` classes from the `ArrayPress\S3` namespace.
+
+### Validate Helper Function
+
+The `validate` function checks if a given value meets specific criteria defined in the `Validate` class methods. It returns `true` for successful validation or `false` otherwise.
+
+```php
+$isValid = validate('bucket', 'my-valid-bucket-name');
+if ($isValid) {
+    echo "Bucket name is valid.";
+} else {
+    echo "Bucket name is invalid or method doesn't exist.";
+}
+```
+
+This function abstracts the complexity of direct validation calls and exception handling, making it easier to integrate into validation flows.
+
+### Sanitize Helper Function
+
+The `sanitize` function cleans a given value according to the rules specified in the `Sanitize` class methods. It directly returns the sanitized value.
+
+```php
+$sanitizedValue = sanitize('objectKey', 'my folder/my file.txt*');
+echo $sanitizedValue; // Should output the sanitized version of the object key, e.g., "my folder/my file.txt"
+```
+
+In case the specified method does not exist within the `Sanitize` class, an `InvalidArgumentException` is thrown, indicating an implementation error.
+
+Note: Direct use of `sanitize` without checking for method existence might lead to exceptions if the method name is incorrect or not supported.
+
+Utilizing these utility functions streamlines the process of ensuring that data interacting with Amazon S3 is properly formatted and validated, enhancing the security and reliability of your S3 operations.
 
 ## Contributions
 
