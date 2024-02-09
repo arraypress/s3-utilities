@@ -1,107 +1,149 @@
 # S3 Utilities Library
 
-The utilities library has been meticulously crafted to ensure the correctness and compliance of S3 bucket names,
-endpoints, regions, and object keys. Its objective is to sanitize and validate names and strings according to the S3
-naming conventions, ensuring seamless integration with S3-compatible storage systems and safeguarding against potential
-naming conflicts or violations.
+The S3 Utilities Library is a comprehensive toolkit designed for developers working with Amazon S3 and S3-compatible storage solutions. This library encompasses a wide range of functionalities including sanitization, validation, and serialization of S3 parameters, ensuring adherence to AWS standards and enhancing the safety and efficiency of cloud storage operations.
 
 **Key Features:**
 
-* **Bucket Name Sanitization:** Transform any input into a valid S3 bucket name. For instance, turning "
-  My_Bucket-Name.123" into "my-bucket-name.123".
-* **Endpoint & Region Cleaning:** Sanitize and strip endpoints and regions, ensuring they adhere to valid formats.
-  Transforming something like "https://my.endpoint.com/" into "my.endpoint.com" or "us-west-1_extra" into "us-west-1".
-* **Object Key Cleanup:** Object keys can contain a mix of characters, but the library ensures that they are compliant
-  with S3 standards.
-* **URL Encoding & Decoding:** The library offers functionality to encode and decode object keys, essential when dealing
-  with spaces or special characters.
-* **Validation:** Besides sanitization, the library also validates bucket names to make sure they conform to S3's
-  stringent naming conventions.
-* **Broad S3 Compatibility:** While the class aids in sanitization, its design ensures compatibility with numerous
-  S3-Compatible storage solutions, including Linode, DigitalOcean Spaces, Cloudflare R2, BackBlaze, and more.
+- **Comprehensive Sanitization:** Ensures that bucket names, object keys, endpoints, and other parameters conform to S3 standards by removing or replacing invalid characters.
+- **Robust Validation:** Validates inputs to ensure they meet specific criteria for AWS access keys, bucket names, object keys, and more, preventing common errors.
+- **Advanced Serialization:** Facilitates the correct encoding and decoding of object keys, crucial for handling special characters in S3 object paths.
+- **Wide Compatibility:** Designed to work seamlessly with AWS S3 and various S3-compatible services like Linode, DigitalOcean Spaces, and BackBlaze.
+- **Utility Functions:** Provides helper functions for validation and sanitization, simplifying common tasks and streamlining development.
 
-Ensure your S3 operations are error-free and compliant by integrating the `Sanitize` class into your application.
-Whether you're building a new application, migrating data, or just managing your S3 storage, proper naming and
-validation are crucial for smooth operations.
+Ensure your cloud storage interactions are optimized, secure, and compliant by leveraging the S3 Utilities Library.
 
-## Minimum Requirements ##
+## Minimum Requirements
 
-* **PHP:** 7.4
+- **PHP:** 7.4 or later
 
-## Installation ##
+## Installation
 
-S3 Utilities is a developer library, not a plugin, which means you need to include it somewhere in your own
-project.
-
-You can use Composer:
+To integrate the S3 Utilities Library into your project, use Composer:
 
 ```bash
-composer require arraypress/slurp
+composer require arraypress/s3-utilities
 ```
 
 ### Including the Vendor Library
 
-```php 
-// Require the Composer autoloader.
+Include the Composer autoloader in your project to access the library:
+
+```php
 require_once __DIR__ . '/vendor/autoload.php';
 ```
 
-**Usage Examples for the `Sanitize` Class**
+## Usage Examples
 
-**1. Sanitizing Bucket Names:**
+**Sanitize::accessKey (Sanitizing AWS Access Key ID):**
 
 ```php
-$input = "My_Bucket-Name.123";
-$sanitized = ArrayPress\S3\Sanitize::bucket( $input );
-echo $sanitized;  // Outputs: "my-bucket-name.123"
+use ArrayPress\S3\Sanitize;
+
+echo Sanitize::accessKey("AKIAIOSFODNN7EXAMPLE");
+// Outputs: "AKIAIOSFODNN7EXAMPLE"
 ```
 
-**2. Sanitizing S3 Region Strings:**
+**Sanitize::secretKey (Sanitizing AWS Secret Access Key):**
 
 ```php
-$input = "us-west-1_extra";
-$sanitized = ArrayPress\S3\Sanitize::region( $input );
-echo $sanitized;  // Outputs: "us-west-1"
+echo Sanitize::secretKey("wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
+// Outputs: "wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY"
 ```
 
-**3. Sanitizing Endpoints:**
+**Sanitize::bucket (Sanitizing Bucket Names):**
 
 ```php
-$input = "https://my.endpoint.com/";
-$sanitized = ArrayPress\S3\Sanitize::endpoint( $input );
-echo $sanitized;  // Outputs: "my.endpoint.com"
+echo Sanitize::bucket("My_Bucket-Name.123");
+// Outputs: "my-bucket-name.123"
 ```
 
-**4. Sanitizing Object Keys:**
+**Sanitize::objectKey (Sanitizing Object Keys):**
 
 ```php
-$input = "my_folder/my_file.txt*";
-$sanitized = ArrayPress\S3\Sanitize::objectKey( $input );
-echo $sanitized;  // Outputs: "my_folder/my_file.txt"
+echo Sanitize::objectKey("my_folder/my_file.txt*");
+// Outputs: "my_folder/my_file.txt"
 ```
 
-**5. Encoding Object Names:**
+**Sanitize::region (Sanitizing S3 Region Strings):**
 
 ```php
-$input = "my folder/my file.txt";
-$encoded = ArrayPress\S3\Serialization::encodeObjectName( $input );
-echo $encoded;  // Outputs: "my%20folder/my%20file.txt"
+echo Sanitize::region("us-west-1_extra");
+// Outputs: "us-west-1"
 ```
 
-**6. Decoding Object Names:**
+**Sanitize::endpoint (Sanitizing Endpoints):**
 
 ```php
-$input = "my%20folder/my%20file.txt";
-$decoded = ArrayPress\S3\Serialization::decodeObjectName( $input );
-echo $decoded;  // Outputs: "my folder/my file.txt"
+echo Sanitize::endpoint("https://my.endpoint.com/");
+// Outputs: "my.endpoint.com"
 ```
 
-**7. Validating Bucket Names:**
+**Validate::accessKey (Validating AWS Access Key ID):**
 
 ```php
-$input = "my.bucket-123";
-$is_valid = ArrayPress\S3\Validate::is_valid( $input, 'bucket' );
-echo $is_valid ? 'Valid' : 'Invalid';  // Outputs: "Valid"
+use ArrayPress\S3\Validate;
+
+if (Validate::accessKey("AKIAIOSFODNN7EXAMPLE")) {
+    echo "Access key is valid.";
+} else {
+    echo "Access key is invalid.";
+}
+```
+
+**Validate::secretKey (Validating AWS Secret Access Key):**
+
+```php
+if (Validate::secretKey("wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")) {
+    echo "Secret key is valid.";
+} else {
+    echo "Secret key is invalid.";
+}
+```
+
+**Validate::bucket (Validating Bucket Names):**
+
+```php
+if (Validate::bucket("my-bucket-name.123")) {
+    echo "Bucket name is valid.";
+} else {
+    echo "Bucket name is invalid.";
+}
+```
+
+**Validate::objectKey (Validating Object Keys):**
+
+```php
+if (Validate::objectKey("my_folder/my_file.txt")) {
+    echo "Object key is valid.";
+} else {
+    echo "Object key is invalid.";
+}
+```
+
+**Validate::region (Validating S3 Region Strings):**
+
+```php
+if (Validate::region("us-west-1")) {
+    echo "Region is valid.";
+} else {
+    echo "Region is invalid.";
+}
+```
+
+**Serialization::encodeObjectName (Encoding Object Names):**
+
+```php
+use ArrayPress\S3\Serialization;
+
+echo Serialization::encodeObjectName("my folder/my file.txt");
+// Outputs: "my%20folder/my%20file.txt"
+```
+
+**Serialization::decodeObjectName (Decoding Object Names):**
+
+```php
+echo Serialization::decodeObjectName("my%20folder/my%20file.txt");
+// Outputs: "my folder/my file.txt"
 ```
 
 ## Contributions
