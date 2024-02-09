@@ -300,8 +300,9 @@ This function abstracts the complexity of direct validation calls and exception 
 The `sanitize` function cleans a given value according to the rules specified in the `Sanitize` class methods. It directly returns the sanitized value.
 
 ```php
+// Should output the sanitized version of the object key, e.g., "my folder/my file.txt"
 $sanitizedValue = sanitize('objectKey', 'my folder/my file.txt*');
-echo $sanitizedValue; // Should output the sanitized version of the object key, e.g., "my folder/my file.txt"
+echo $sanitizedValue;
 ```
 
 In case the specified method does not exist within the `Sanitize` class, an `InvalidArgumentException` is thrown, indicating an implementation error.
