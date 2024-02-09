@@ -19,6 +19,8 @@
  * @description   Provides utility methods for encoding, decoding, and sanitizing S3-related parameters.
  */
 
+declare( strict_types=1 );
+
 namespace ArrayPress\S3;
 
 /**

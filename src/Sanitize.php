@@ -27,6 +27,8 @@
  *                compliance.
  */
 
+declare( strict_types=1 );
+
 namespace ArrayPress\S3;
 
 /**

@@ -1,13 +1,27 @@
 {
   "name": "arraypress/s3-utilities",
   "description": "Offers utility methods for cleansing and validating input parameters associated with S3 operations.",
+  "homepage": "https://github.com/arraypress/s3-utilities/",
   "type": "library",
   "license": "GPL-2.0-or-later",
-  "minimum-stability": "stable",
-  "require": {},
+  "authors": [
+    {
+      "name": "David Sherlock",
+      "homepage": "https://arraypress.com/"
+    }
+  ],
+  "require": {
+    "php": "^7.4 || ^8.0",
+    "arraypress/slurp": "^1.0"
+  },
   "autoload": {
     "psr-4": {
       "ArrayPress\\S3\\": "src/"
-    }
-  }
+    },
+    "files": [
+      "src/Functions.php"
+    ]
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }

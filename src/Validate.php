@@ -24,6 +24,8 @@
  *                with AWS standards.
  */
 
+declare( strict_types=1 );
+
 namespace ArrayPress\S3;
 
 use InvalidArgumentException;
