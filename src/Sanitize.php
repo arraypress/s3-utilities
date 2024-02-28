@@ -232,7 +232,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\Sanitize' ) ) :
 		 *
 		 * @return string The sanitized extra query string.
 		 */
-		public static function extra_query_string( string $extraQueryString ): string {
+		public static function extraQueryString( string $extraQueryString ): string {
 			return preg_replace( self::QUERY_STRING_SANITIZE_REGEX, '', $extraQueryString );
 		}
 
