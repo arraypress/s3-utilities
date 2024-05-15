@@ -2,8 +2,8 @@
 /**
  * These helper functions provide utilities for working with S3 Signer class.
  *
- * @since       1.0.0
- * @copyright   Copyright (c) 2023, ArrayPress Limited
+ * @since       0.1.0
+ * @copyright   Copyright (c) 2024, ArrayPress Limited
  * @license     GPL2+
  * @package     ArrayPress/s3-signer
  * @author      David Sherlock

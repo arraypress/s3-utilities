@@ -20,9 +20,10 @@
  * vulnerabilities associated with improper or malicious input.
  *
  * @package       arraypress/s3-utilities
+ * @copyright     Copyright (c) 2024, ArrayPress Limited
  * @author        David Sherlock
  * @license       GPL2+
- * @version       1.0.0
+ * @version       0.1.0
  * @description   Methods for sanitizing various parameters related to Amazon S3, ensuring data safety and protocol
  *                compliance.
  */
