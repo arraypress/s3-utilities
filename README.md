@@ -198,7 +198,7 @@ try {
 
 ```php
 try {
-    Validate::region("us-west-1");
+    Validate::region( "us-west-1" );
     echo "Region is valid.";
 } catch (InvalidArgumentException $e) {
     echo "Region validation error: " . $e->getMessage();
@@ -209,7 +209,7 @@ try {
 
 ```php
 try {
-    Validate::endpoint("my.endpoint.com");
+    Validate::endpoint( "my.endpoint.com" );
     echo "Endpoint is valid.";
 } catch (InvalidArgumentException $e) {
     echo "Endpoint validation error: " . $e->getMessage();
@@ -220,7 +220,7 @@ try {
 
 ```php
 try {
-    Validate::duration(60);
+    Validate::duration( 60 );
     echo "Duration is valid.";
 } catch (InvalidArgumentException $e) {
     echo "Duration validation error: " . $e->getMessage();
@@ -231,7 +231,7 @@ try {
 
 ```php
 try {
-    Validate::extraQueryString("param1=value1&param2=value2");
+    Validate::extraQueryString( "param1=value1&param2=value2" );
     echo "Extra query string is valid.";
 } catch (InvalidArgumentException $e) {
     echo "Extra query string validation error: " . $e->getMessage();
@@ -252,7 +252,7 @@ when dealing with file paths that include spaces or reserved characters.
 use ArrayPress\S3\Serialization;
 
 $objectName = "my folder/my file.txt";
-$encodedObjectName = Serialization::encodeObjectName($objectName);
+$encodedObjectName = Serialization::encodeObjectName( $objectName );
 echo $encodedObjectName; // Outputs: "my%20folder/my%20file.txt"
 ```
 
@@ -266,7 +266,7 @@ URL-encoded paths.
 
 ```php
 $encodedKey = "my%20folder/my%20file.txt";
-$decodedKey = Serialization::decodeObjectName($encodedKey);
+$decodedKey = Serialization::decodeObjectName( $encodedKey );
 echo $decodedKey; // Outputs: "my folder/my file.txt"
 ```
 
@@ -285,8 +285,8 @@ The helper functions `validate` and `sanitize` offer simplified interfaces for v
 The `validate` function checks if a given value meets specific criteria defined in the `Validate` class methods. It returns `true` for successful validation or `false` otherwise.
 
 ```php
-$isValid = validate('bucket', 'my-valid-bucket-name');
-if ($isValid) {
+$isValid = validate( 'bucket', 'my-valid-bucket-name' );
+if ( $isValid ) {
     echo "Bucket name is valid.";
 } else {
     echo "Bucket name is invalid or method doesn't exist.";
@@ -301,7 +301,7 @@ The `sanitize` function cleans a given value according to the rules specified in
 
 ```php
 // Should output the sanitized version of the object key, e.g., "my folder/my file.txt"
-$sanitizedValue = sanitize('objectKey', 'my folder/my file.txt*');
+$sanitizedValue = sanitize( 'objectKey', 'my folder/my file.txt*' );
 echo $sanitizedValue;
 ```
 

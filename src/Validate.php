@@ -19,7 +19,7 @@
  * @package       arraypress/s3-utilities
  * @author        David Sherlock
  * @license       GPL2+
- * @version       1.0.0
+ * @version       0.1.0
  * @description   Utility methods for validating Amazon S3-related parameters, ensuring data integrity and compliance
  *                with AWS standards.
  */
@@ -29,6 +29,11 @@ declare( strict_types=1 );
 namespace ArrayPress\S3;
 
 use InvalidArgumentException;
+
+use function preg_match;
+use function strlen;
+use function preg_replace;
+use function filter_var;
 
 /**
  * Check if the class `Validate` is defined, and if not, define it.

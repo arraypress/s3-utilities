@@ -12,9 +12,9 @@
  * and securely processed, reducing the risk of errors and vulnerabilities.
  *
  * @package       arraypress/s3-utilities
- * @copyright     Copyright (c) 2023, ArrayPress Limited
+ * @copyright     Copyright (c) 2024, ArrayPress Limited
  * @license       GPL2+
- * @since         1.0.0
+ * @version       0.1.0
  * @author        David Sherlock
  * @description   Provides utility methods for encoding, decoding, and sanitizing S3-related parameters.
  */
@@ -22,6 +22,10 @@
 declare( strict_types=1 );
 
 namespace ArrayPress\S3;
+
+use function str_replace;
+use function rawurlencode;
+use function rawurldecode;
 
 /**
  * Check if the class `Serialization` is defined, and if not, define it.

@@ -2,10 +2,10 @@
 /**
  * These helper functions provide utilities for working with S3 Signer class.
  *
- * @package     ArrayPress/s3-signer
+ * @since       1.0.0
  * @copyright   Copyright (c) 2023, ArrayPress Limited
  * @license     GPL2+
- * @since       1.0.0
+ * @package     ArrayPress/s3-signer
  * @author      David Sherlock
  */
 
@@ -14,6 +14,7 @@ declare( strict_types=1 );
 namespace ArrayPress\S3;
 
 use InvalidArgumentException;
+use function method_exists;
 
 if ( ! function_exists( 'validate' ) ) {
 	/**

@@ -31,6 +31,14 @@ declare( strict_types=1 );
 
 namespace ArrayPress\S3;
 
+use function abs;
+use function filter_var;
+use function htmlspecialchars;
+use function preg_match;
+use function preg_replace;
+use function strtolower;
+use function trim;
+
 /**
  * Check if the class `Sanitize` is defined, and if not, define it.
  */
