@@ -19,7 +19,7 @@
   },
   "autoload": {
     "psr-4": {
-      "ArrayPress\\S3\\": "src/"
+      "ArrayPress\\S3\\Utils\\": "src/"
     },
     "files": [
       "src/Functions.php"
