@@ -21,7 +21,7 @@
 
 declare( strict_types=1 );
 
-namespace ArrayPress\S3;
+namespace ArrayPress\S3\Utils;
 
 use function str_replace;
 use function rawurlencode;

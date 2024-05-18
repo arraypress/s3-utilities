@@ -11,7 +11,7 @@
 
 declare( strict_types=1 );
 
-namespace ArrayPress\S3;
+namespace ArrayPress\S3\Utils;
 
 use InvalidArgumentException;
 use function method_exists;
@@ -36,7 +36,6 @@ if ( ! function_exists( 'validate' ) ) {
 		try {
 			// Ensure the method exists in the Validate class before attempting to call it
 			if ( method_exists( Validate::class, $methodName ) ) {
-				// Call the method dynamically with $value as its argument
 				Validate::{$methodName}( $value );
 
 				return true; // Validation succeeded
@@ -44,7 +43,6 @@ if ( ! function_exists( 'validate' ) ) {
 				throw new InvalidArgumentException( "Validation method '{$methodName}' does not exist." );
 			}
 		} catch ( InvalidArgumentException $e ) {
-			// Validation failed or method does not exist
 			return false;
 		}
 	}
@@ -64,9 +62,7 @@ if ( ! function_exists( 'sanitize' ) ) {
 	 * @return mixed The sanitized value.
 	 */
 	function sanitize( string $methodName, $value ) {
-		// Ensure the method exists in the Sanitize class before attempting to call it
 		if ( method_exists( Sanitize::class, $methodName ) ) {
-			// Call the method dynamically with $value as its argument
 			return Sanitize::{$methodName}( $value );
 		} else {
 			throw new InvalidArgumentException( "Santization method '{$methodName}' does not exist." );

@@ -26,7 +26,7 @@
 
 declare( strict_types=1 );
 
-namespace ArrayPress\S3;
+namespace ArrayPress\S3\Utils;
 
 use InvalidArgumentException;
 
