@@ -28,49 +28,42 @@ use function rawurlencode;
 use function rawurldecode;
 
 /**
- * Check if the class `Serialization` is defined, and if not, define it.
+ * Serialization
+ *
+ * Provides utility methods for encoding, decoding, and sanitizing input parameters associated with S3 operations.
  */
-if ( ! class_exists( __NAMESPACE__ . '\\Serialization' ) ) :
+class Serialization {
 
 	/**
-	 * Serialization
+	 * Raw URL encode a key and allow for '/' characters.
 	 *
-	 * Provides utility methods for encoding, decoding, and sanitizing input parameters associated with S3 operations.
+	 * Example:
+	 * Input: "my folder/my file.txt"
+	 * Output: "my%20folder/my%20file.txt"
+	 *
+	 * @param string $key Key to encode
+	 *
+	 * @return string Returns the encoded key
 	 */
-	class Serialization {
+	public static function encodeObjectName( string $key ): string {
+		$key = str_replace( '+', ' ', $key );
 
-		/**
-		 * Raw URL encode a key and allow for '/' characters.
-		 *
-		 * Example:
-		 * Input: "my folder/my file.txt"
-		 * Output: "my%20folder/my%20file.txt"
-		 *
-		 * @param string $key Key to encode
-		 *
-		 * @return string Returns the encoded key
-		 */
-		public static function encodeObjectName( string $key ): string {
-			$key = str_replace( '+', ' ', $key );
-
-			return str_replace( '%2F', '/', rawurlencode( $key ) );
-		}
-
-		/**
-		 * Decode a URL encoded object key.
-		 *
-		 * Example:
-		 * Input: "my%20folder/my%20file.txt"
-		 * Output: "my folder/my file.txt"
-		 *
-		 * @param string $key Encoded object key.
-		 *
-		 * @return string Returns the decoded key.
-		 */
-		public static function decodeObjectName( string $key ): string {
-			return rawurldecode( str_replace( ' ', '+', $key ) );
-		}
-
+		return str_replace( '%2F', '/', rawurlencode( $key ) );
 	}
 
-endif;
+	/**
+	 * Decode a URL encoded object key.
+	 *
+	 * Example:
+	 * Input: "my%20folder/my%20file.txt"
+	 * Output: "my folder/my file.txt"
+	 *
+	 * @param string $key Encoded object key.
+	 *
+	 * @return string Returns the decoded key.
+	 */
+	public static function decodeObjectName( string $key ): string {
+		return rawurldecode( str_replace( ' ', '+', $key ) );
+	}
+
+}
